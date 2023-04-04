@@ -16,7 +16,9 @@ public class Main {
         server.createContext("/test", new TestHandler());
         server.createContext("/foo", new FooHandler());
         server.createContext("/bar", new BarHandler());
-        server.setExecutor(null); // creates a default executor
+        // server.setExecutor(null); // creates a default executor
+        // server.setExecutor(java.util.concurrent.Executors.newCachedThreadPool());
+        server.setExecutor(java.util.concurrent.Executors.newFixedThreadPool(5));
         server.start();
     }
 
