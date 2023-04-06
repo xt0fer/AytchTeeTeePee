@@ -38,10 +38,24 @@ public class Jvi {
         if (key == term.isControlKey('q')) {
             die(0);
         }
+        if (key == term.isControlKey('t')) {
+            try {
+                term.getTerminalSize();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
     // else do something with key.
 
     }
 
+    void drawRows() {
+        int y;
+        for (y = 0; y < 24; y++) {
+            term.putString("~\r\n");
+        }
+    }
 
 
     /* Test routines */
