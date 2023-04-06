@@ -21,6 +21,10 @@ public class JVITerminal {
         }
     }
 
+    public void refreshScreen() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+    }
     static void setRawMode() {
         String[] cmd = {"/bin/sh", "-c", "stty raw </dev/tty"};
         try {
@@ -45,9 +49,11 @@ public class JVITerminal {
 
     public void outChar(int k) {
         System.out.printf("%c",(char)k);
+        System.out.flush();
     }
     public void outHex(int k) {
         System.out.printf("0x%02x", k);
+        System.out.flush();
     }
     public int isControlKey(int k) {
         return ((k) & 0x1f);

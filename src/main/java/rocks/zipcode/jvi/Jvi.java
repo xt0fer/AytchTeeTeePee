@@ -23,6 +23,7 @@ public class Jvi {
     private int run() {
         setRawMode();
         while (true) {
+            term.refreshScreen();
             this.processKeyPress();
          }
     }
