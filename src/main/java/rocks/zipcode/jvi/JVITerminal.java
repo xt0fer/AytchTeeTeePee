@@ -15,7 +15,7 @@ import java.util.logging.SimpleFormatter;
 public class JVITerminal {
     Console console;
     Reader reader;
-    int rows, cols;
+    int screenrows, screencols;
 
     // logging
     Logger logger = Logger.getLogger("MyLog");
@@ -46,15 +46,44 @@ public class JVITerminal {
         }
     }
 
-    // adds ability to clear terminal screen
-    public void blankScreen() {
-        System.out.print("\033[H\033[2J");
+    public void outChar(char c) {
+        System.out.printf("%c", c);
         System.out.flush();
     }
 
-    public void refreshScreen() {
-        this.blankScreen();
+    public void putString(String s) {
+        char[] cha = s.toCharArray();
+        for (char k : cha) {
+            System.out.printf("%c", (char) k);
+        }
+        System.out.flush();
     }
+
+    public int getRows() {
+        return this.screenrows;
+    }
+    public int getCols() {
+        return this.screencols;
+    }
+    // adds ability to clear terminal screen
+    public void blankScreen() {
+        putString("\033[2J");
+    }
+    public void cursorZero() {
+        putString("\033[H");
+    }
+
+    public void cursorHide() {
+        putString("\033[?25l");
+    }
+    public void cursorShow() {
+        putString("\033[?25h");
+    }
+    public void clearToEOL() {
+        putString("\033[K");
+    }
+
+
     static void setRawMode() {
         String[] cmd = {"/bin/sh", "-c", "stty raw </dev/tty"};
         try {
@@ -100,26 +129,10 @@ public class JVITerminal {
         logger.info(sb.toString());
     }
 
-    public void outChar(int k) {
-        if (Character.isISOControl(k)) {
-            System.out.printf("0x%02x", k);
-            System.out.flush();
-        } else {
-            System.out.printf("%c", (char) k);
-            System.out.flush();
-        }
-    }
     public int isControlKey(int k) {
         return ((k) & 0x1f);
     }
 
-    public void putString(String s) {
-        char[] cha = s.toCharArray();
-        for (char k : cha) {
-            System.out.printf("%c", (char) k);
-            System.out.flush();
-        }
-    }
 
     // you might ask, what magic incantation is this,
     // and I'd say "'tis ancient vt100" that works on
@@ -141,9 +154,9 @@ public class JVITerminal {
             }
         }
         String size = sb.toString();
-        this.rows = Integer.parseInt(size.substring(size.indexOf("\u001b[") + 2, size.indexOf(';')));
-        this.cols = Integer.parseInt(size.substring(size.indexOf(';') + 1, size.indexOf('R')));
-        logger.info(String.format("Terminal size (%d,%d)", this.rows, this.cols));
+        this.screenrows = Integer.parseInt(size.substring(size.indexOf("\u001b[") + 2, size.indexOf(';')));
+        this.screencols = Integer.parseInt(size.substring(size.indexOf(';') + 1, size.indexOf('R')));
+        logger.info(String.format("Terminal size (%d,%d)", this.screenrows, this.screencols));
     }
 
 }

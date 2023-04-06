@@ -23,12 +23,34 @@ public class Jvi {
     private int run() {
         setRawMode();
         while (true) {
-            term.refreshScreen();
+            this.refreshScreen();
             this.processKeyPress();
          }
     }
 
+    public void refreshScreen() {
+        term.blankScreen();
+        term.cursorZero();
+        term.cursorHide();
+
+        this.drawRows();
+
+        term.cursorShow();
+        term.cursorZero();
+    }
+
+    void drawRows() {
+        int r = term.getRows();
+        term.clearToEOL();
+        for (int y = 0; y < r; y++) {
+            term.putString("~\r\n");
+        }
+    }
+
+
+
     private void die(int end) { // exit editor
+        term.blankScreen();
         setCookedMode(); // reset terminal
         exit(end); // Bye, Felicia
     }
@@ -48,13 +70,6 @@ public class Jvi {
 
     // else do something with key.
 
-    }
-
-    void drawRows() {
-        int y;
-        for (y = 0; y < 24; y++) {
-            term.putString("~\r\n");
-        }
     }
 
 
